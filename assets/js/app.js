@@ -9,7 +9,8 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 if (response) {
-                    $("#team").html("").html(response);
+                    $("#budget").text("$"+response.budget+"m");
+                    $("#team").html("").html(response.html);
                 }
             }
         });

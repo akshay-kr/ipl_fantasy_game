@@ -35,6 +35,15 @@ class Manage extends CI_Controller {
             "title" => "IPL Fantasy League",
             "content" => "main",
         );
+        if (isset($_SESSION['selected'])) {
+            $data['selected'] = $this->player_model->get($_SESSION['selected']);
+        }
+
+        if (!isset($_SESSION['budget'])) {
+            $_SESSION['budget'] = 100;
+        }
+
+        $data["budget"] = $_SESSION['budget'];
 
         $data["links"] = $this->pagination->create_links();
         $players = $this->player_model->get(FALSE, PAGINATION_PER_PAGE, $page, $filters, FALSE);
@@ -47,6 +56,7 @@ class Manage extends CI_Controller {
 
         $player_id = $this->input->post('player_id');
 
+        $this->budget($player_id);
         if (isset($_SESSION['selected']) && count($_SESSION['selected']) <= 8) {
             array_push($_SESSION['selected'], $player_id);
         } else {
@@ -57,7 +67,14 @@ class Manage extends CI_Controller {
         $html = $this->load->view("content/teamlist", array(
             "selected" => $this->player_model->get($_SESSION['selected'])
                 ), TRUE);
-        echo $html;
+        echo json_encode(array("html" => $html, "budget" => $_SESSION['budget']));
+    }
+
+    private function budget($player_id) {
+
+        $player_data = $this->player_model->get(array($player_id));
+        $current_budget = $_SESSION['budget'] - $player_data[0]->price;
+        $_SESSION['budget'] = $current_budget;
     }
 
 }

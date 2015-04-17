@@ -25,11 +25,7 @@ class Player_model extends CI_Model {
         }
 
         $query = $this->db->get('players');
-        if ($id && count($id) == 1) {
-            return $query->row_array();
-        } else {
-            return $query->result();
-        }
+        return $query->result();
     }
 
 }

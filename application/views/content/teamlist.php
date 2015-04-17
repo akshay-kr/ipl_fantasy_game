@@ -9,7 +9,6 @@
                 </tr>
             </thead>
             <tr id="player1">
-
                 <?php if (isset($selected[0])) { ?>
                     <td><?php echo $selected[0]->name ?></td>
                     <td><?php echo getSkill($selected[0]->skill); ?></td>
@@ -17,7 +16,7 @@
                     <td colspan="3">
                         <a>X Remove</a>
                     </td>
-                <?php } else { ?>
+                <?php } else  { ?>
                     <td colspan="3" class="text-center">
                         Select Player
                     </td>

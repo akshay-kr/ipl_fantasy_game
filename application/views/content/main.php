@@ -14,7 +14,7 @@
     <div class="small-1 large-1 columns"> &nbsp; </div>
     <div id="budget_container" class="small-2 large-2 columns">
         <p class="text-center">BUDGET</p>
-        <p class="text-center"><?php echo "$100m" ?></p>
+        <p id="budget" class="text-center"><?php echo "$" . $budget . "m" ?></p>
     </div>
     <div class="small-1 large-1 columns"> &nbsp; </div>
 </div>
