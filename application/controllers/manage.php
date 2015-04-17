@@ -7,6 +7,7 @@ class Manage extends CI_Controller {
 
     function Manage() {
         parent::__construct();
+        session_start();
     }
 
     public function index() {
@@ -43,7 +44,20 @@ class Manage extends CI_Controller {
     }
 
     public function select() {
+
         $player_id = $this->input->post('player_id');
+
+        if (isset($_SESSION['selected']) && count($_SESSION['selected']) <= 8) {
+            array_push($_SESSION['selected'], $player_id);
+        } else {
+            $_SESSION['selected'] = array();
+            array_push($_SESSION['selected'], $player_id);
+        }
+
+        $html = $this->load->view("content/teamlist", array(
+            "selected" => $this->player_model->get($_SESSION['selected'])
+                ), TRUE);
+        echo $html;
     }
 
 }

@@ -3,12 +3,13 @@ $(document).ready(function () {
     $(".pick").on("click", function () {
         var player_id = $(this).attr("player_id");
         $.ajax({
-            type: 'POST',
             url: BASE_URL + "manage/select",
+            type: 'POST',
             data: {player_id: player_id},
+            dataType: 'json',
             success: function (response) {
                 if (response) {
-                    alert(response);
+                    $("#team").html("").html(response);
                 }
             }
         });

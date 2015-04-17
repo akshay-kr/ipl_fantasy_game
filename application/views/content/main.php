@@ -29,7 +29,9 @@
                 <option value="3">4 Batsmen, 1 Wicketkeeper, 1 All rounders, 2 Bowlers</option>
             </select>
         </div>
-        <?php $this->load->view("content/teamlist"); ?>
+        <div id="team">
+            <?php $this->load->view("content/teamlist"); ?>
+        </div>
     </div><div class="small-1 large-1 columns">&nbsp;</div>
 
     <div id="player_list" class="small-5 large-5 columns">

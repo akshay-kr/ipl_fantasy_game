@@ -14,7 +14,7 @@ class Player_model extends CI_Model {
     public function get($id = FALSE, $limit = FALSE, $start = 0, $filters = FALSE) {
 
         if ($id) {
-            $this->db->where('id', $id);
+            $this->db->where_in('id', $id);
         } else { // list conditions
             if ($filters) {
                 $this->db->where($filters);
@@ -25,7 +25,7 @@ class Player_model extends CI_Model {
         }
 
         $query = $this->db->get('players');
-        if ($id) {
+        if ($id && count($id) == 1) {
             return $query->row_array();
         } else {
             return $query->result();
