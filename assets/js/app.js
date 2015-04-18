@@ -2,18 +2,18 @@ $(document).ready(function () {
     BASE_URL = $("#baseurl").val();
     $(".pick").on("click", function () {
         var player_id = $(this).attr("player_id");
-        $(this).addClass('disabled');
         $.ajax({
             url: BASE_URL + "manage/select",
             type: 'POST',
             data: {player_id: player_id},
             dataType: 'json',
             success: function (response) {
-                if (response) {
-                    $("#budget").text("$" + response.budget + "m");
-                    $("#team").html("").html(response.html);
+                if (response.error) {
+                    alert(response.error);
                 } else {
-                    $(".pick[player_id=" + player_id + "]").removeClass('disabled');
+                    $("#budget").text("$" + response.budget + "m");
+                    $(".pick[player_id=" + player_id + "]").addClass('disabled');
+                    $("#team").html("").html(response.html);
                 }
             }
         });
@@ -29,8 +29,8 @@ $(document).ready(function () {
             success: function (response) {
                 if (response) {
                     $("#budget").text("$" + response.budget + "m");
-                    $("#team").html("").html(response.html);
                     $(".pick[player_id=" + player_id + "]").removeClass('disabled');
+                    $("#team").html("").html(response.html);
                 }
             }
         });

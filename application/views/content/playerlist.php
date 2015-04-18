@@ -12,11 +12,7 @@
                 <?php foreach ($players as $player) { ?>
                     <tr>
                         <td>
-                            <?php if (isset($_SESSION['selected']) && in_array($player->id, $_SESSION['selected'])) { ?>
-                                <?php echo $player->name; ?>
-                            <?php } else { ?>
-                                <a class="pick" player_id="<?php echo $player->id; ?>"><?php echo $player->name; ?></a>
-                            <?php } ?>
+                            <a class="<?php echo (isset($_SESSION['selected']) && in_array($player->id, $_SESSION['selected'])) ? "pick disabled" : "pick";?>" player_id="<?php echo $player->id; ?>"><?php echo $player->name; ?></a>
                         </td>
                         <td><?php echo getSkill($player->skill); ?></td>
                         <td><?php echo '$' . $player->price . "m"; ?></td>

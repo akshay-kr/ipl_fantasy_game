@@ -55,28 +55,47 @@ class Manage extends CI_Controller {
     public function select() {
 
         $player_id = $this->input->post('player_id');
+        $error = NULL;
 
-        $this->budget($player_id, 'select');
-        if (isset($_SESSION['selected']) && count($_SESSION['selected']) <= 8) {
-            array_push($_SESSION['selected'], $player_id);
+        if (isset($_SESSION['selected'])) {
+            if (count($_SESSION['selected']) < 8) {
+                $result = $this->budget($player_id, 'select');
+                if ($result) {
+                    array_push($_SESSION['selected'], $player_id);
+                } else {
+                    $error = "You dont have enough budget to buy this player.";
+                }
+            } else if (count($_SESSION['selected']) == 8) {
+                $error = "Maximum of 8 players can be selected.";
+            }
         } else {
             $_SESSION['selected'] = array();
             array_push($_SESSION['selected'], $player_id);
+            $result = $this->budget($player_id, 'select');
         }
 
         $html = $this->teamTable();
-        echo json_encode(array("html" => $html, "budget" => $_SESSION['budget']));
+        echo json_encode(array("html" => $html, "budget" => $_SESSION['budget'], "error" => $error));
     }
 
     private function budget($player_id, $option) {
 
         $player_data = $this->player_model->get(array($player_id));
+        $player_price = $player_data[0]->price;
+        $current_budget = $_SESSION['budget'];
         if ($option == "select") {
-            $current_budget = $_SESSION['budget'] - $player_data[0]->price;
-        } else if ($option == "remove") {
-            $current_budget = $_SESSION['budget'] + $player_data[0]->price;
+            if ($current_budget >= $player_price) {
+                $current_budget = $_SESSION['budget'] - $player_data[0]->price;
+                $_SESSION['budget'] = $current_budget;
+                return TRUE;
+            } else {
+                return FALSE;
+            }
         }
-        $_SESSION['budget'] = $current_budget;
+        if ($option == "remove") {
+            $current_budget = $_SESSION['budget'] + $player_data[0]->price;
+            $_SESSION['budget'] = $current_budget;
+        }
     }
 
     private function teamTable() {
@@ -98,4 +117,5 @@ class Manage extends CI_Controller {
         $html = $this->teamTable();
         echo json_encode(array("html" => $html, "budget" => $_SESSION['budget']));
     }
+
 }
