@@ -43,6 +43,10 @@ class Manage extends CI_Controller {
             $_SESSION['budget'] = 100;
         }
 
+        if (isset($_SESSION['squad'])) {
+            $data['squad'] = $_SESSION['squad'];
+        }
+
         $data["budget"] = $_SESSION['budget'];
 
         $data["links"] = $this->pagination->create_links();
@@ -55,13 +59,24 @@ class Manage extends CI_Controller {
     public function select() {
 
         $player_id = $this->input->post('player_id');
+        $squad = $_SESSION['squad'];
         $error = NULL;
+        if (isset($_SESSION['selected']) && count($_SESSION['selected']) > 0) {
+            $strategy = getStrategy($squad);
+            $skill_count = $this->skillCount();
 
-        if (isset($_SESSION['selected'])) {
             if (count($_SESSION['selected']) < 8) {
                 $result = $this->budget($player_id, 'select');
                 if ($result) {
                     array_push($_SESSION['selected'], $player_id);
+                    $strategy = getStrategy($squad);
+                    $skill_count = $this->skillCount();
+                    $strategy_flag = $this->checkStrategy($skill_count, $strategy);
+                    if ($strategy_flag) {
+                        $error = $strategy_flag;
+                        unset($_SESSION['selected'][count($_SESSION['selected']) - 1]);
+                        $result = $this->budget($player_id, 'remove');
+                    }
                 } else {
                     $error = "You dont have enough budget to buy this player.";
                 }
@@ -73,6 +88,7 @@ class Manage extends CI_Controller {
             array_push($_SESSION['selected'], $player_id);
             $result = $this->budget($player_id, 'select');
         }
+        // var_dump($_SESSION['selected']);
 
         $html = $this->teamTable();
         echo json_encode(array("html" => $html, "budget" => $_SESSION['budget'], "error" => $error));
@@ -110,12 +126,51 @@ class Manage extends CI_Controller {
         return $html;
     }
 
+    private function skillCount() {
+
+        if (isset($_SESSION['selected']) && count($_SESSION['selected']) > 0) {
+            $selected = $this->player_model->get($_SESSION['selected']);
+            $skill = array();
+            foreach ($selected as $player) {
+                array_push($skill, $player->skill);
+            }
+            $skill_count = array_count_values($skill);
+            return $skill_count;
+        } else {
+            return FALSE;
+        }
+    }
+
+    private function checkStrategy($skill_count, $strategy) {
+
+        $error = NULL;
+        if (isset($skill_count['bat']) && $skill_count['bat'] > $strategy['bat']) {
+            $error = "Only " . $strategy['bat'] . " batsman allowed";
+        } else if (isset($skill_count['wk']) && $skill_count['wk'] > $strategy['wk']) {
+            $error = "Only " . $strategy['wk'] . " wicket keeper allowed";
+        } else if (isset($skill_count['all']) && $skill_count['all'] > $strategy['all']) {
+            $error = "Only " . $strategy['all'] . " all rounder allowed";
+        } else if (isset($skill_count['bow']) && $skill_count['bow'] > $strategy['bow']) {
+            $error = "Only " . $strategy['bow'] . " bowler allowed";
+        }
+
+        return $error;
+    }
+
     public function remove() {
         $player_id = $this->input->post('player_id');
         $_SESSION['selected'] = array_diff($_SESSION['selected'], array($player_id));
         $this->budget($player_id, 'remove');
         $html = $this->teamTable();
         echo json_encode(array("html" => $html, "budget" => $_SESSION['budget']));
+    }
+
+    public function changeSquad() {
+        $squad = $this->input->post('squad');
+        $_SESSION['squad'] = $squad;
+        unset($_SESSION['selected']);
+        unset($_SESSION['budget']);
+        echo "1";
     }
 
 }
