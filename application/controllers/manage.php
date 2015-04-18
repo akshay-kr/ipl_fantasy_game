@@ -35,7 +35,7 @@ class Manage extends CI_Controller {
             "title" => "IPL Fantasy League",
             "content" => "main",
         );
-        if (isset($_SESSION['selected'])) {
+        if (isset($_SESSION['selected']) && count($_SESSION['selected']) > 0) {
             $data['selected'] = $this->player_model->get($_SESSION['selected']);
         }
 
@@ -56,7 +56,7 @@ class Manage extends CI_Controller {
 
         $player_id = $this->input->post('player_id');
 
-        $this->budget($player_id);
+        $this->budget($player_id, 'select');
         if (isset($_SESSION['selected']) && count($_SESSION['selected']) <= 8) {
             array_push($_SESSION['selected'], $player_id);
         } else {
@@ -64,17 +64,38 @@ class Manage extends CI_Controller {
             array_push($_SESSION['selected'], $player_id);
         }
 
-        $html = $this->load->view("content/teamlist", array(
-            "selected" => $this->player_model->get($_SESSION['selected'])
-                ), TRUE);
+        $html = $this->teamTable();
         echo json_encode(array("html" => $html, "budget" => $_SESSION['budget']));
     }
 
-    private function budget($player_id) {
+    private function budget($player_id, $option) {
 
         $player_data = $this->player_model->get(array($player_id));
-        $current_budget = $_SESSION['budget'] - $player_data[0]->price;
+        if ($option == "select") {
+            $current_budget = $_SESSION['budget'] - $player_data[0]->price;
+        } else if ($option == "remove") {
+            $current_budget = $_SESSION['budget'] + $player_data[0]->price;
+        }
         $_SESSION['budget'] = $current_budget;
     }
 
+    private function teamTable() {
+
+        if (isset($_SESSION['selected']) && count($_SESSION['selected']) > 0) {
+            $selected = $this->player_model->get($_SESSION['selected']);
+        } else {
+            $selected = NULL;
+        }
+        $html = $this->load->view("content/teamlist", array(
+            "selected" => $selected), TRUE);
+        return $html;
+    }
+
+    public function remove() {
+        $player_id = $this->input->post('player_id');
+        $_SESSION['selected'] = array_diff($_SESSION['selected'], array($player_id));
+        $this->budget($player_id, 'remove');
+        $html = $this->teamTable();
+        echo json_encode(array("html" => $html, "budget" => $_SESSION['budget']));
+    }
 }
