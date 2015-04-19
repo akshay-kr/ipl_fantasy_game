@@ -7,8 +7,8 @@ class Manage extends CI_Controller {
 
     function Manage() {
         parent::__construct();
-        session_start();
-        unset($_SESSION['filter']);
+        session_start(); //Strat the session.
+        unset($_SESSION['filter']); //Unset the filter.
     }
 
     public function index() {

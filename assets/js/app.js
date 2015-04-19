@@ -3,7 +3,11 @@ $(document).ready(function () {
     $(".pick").on("click", function () {
         var player_id = $(this).attr("player_id");
         var squad = $("#squad").val();
-        if (!squad) {
+        var team_name = $("#team_name").val();
+        if (team_name=="") {
+            alert("Please select a team name.");
+        }
+        else if (!squad) {
             alert("Please select the strategy.");
         } else {
             $.ajax({
@@ -82,7 +86,7 @@ $(document).ready(function () {
         $("#team_name").removeAttr('disabled');
         $("#editName").attr('value', 'SAVE');
         $("#editName").attr('id', 'saveName');
-        
+
     });
 
     $("#filter").on('change', function () {
