@@ -79,26 +79,10 @@ $(document).ready(function () {
     });
 
     $(document.body).on('click', '#editName', function () {
-        $("#team_name").removAttr('disabled');
-        var name = $("#team_name").val();
-        $("#saveName").attr('value', 'SAVE');
-        if (name != "") {
-            $.ajax({
-                url: BASE_URL + "manage/setName",
-                type: 'POST',
-                data: {name: name},
-                dataType: 'text',
-                success: function (response) {
-                    if (response) {
-                        $("#team_name").attr('disabled', 'disabled');
-                        $("#saveName").attr('value', 'EDIT');
-                        $("#saveName").attr('id', 'editName');
-                    }
-                }
-            });
-        } else {
-            alert("Please enter a team name.");
-        }
+        $("#team_name").removeAttr('disabled');
+        $("#editName").attr('value', 'SAVE');
+        $("#editName").attr('id', 'saveName');
+        
     });
 
     $("#filter").on('change', function () {
