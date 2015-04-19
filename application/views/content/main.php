@@ -1,3 +1,9 @@
+<div class="row">
+    <h3 class="text-center"><?php echo "Hi, " . $_SESSION['username']; ?></h3>
+    <div class="text-center">
+        <h5><a id ="logout">Logout</a></h5>
+    </div>
+</div>
 <div class="row" id="main_container">
     <div class="small-1 large-1 columns">&nbsp;</div>
     <div id="select_name" class="small-4 large-4 columns">  
@@ -27,7 +33,7 @@
 </div>
 <br>
 <div class="row">
-    <div id="team" class="small-6 large-6 columns frame">
+    <div id="team_container" class="small-6 large-6 columns frame">
         <div class="small-12 large-12 columns">
             <select class="text-center" id="squad">
                 <option disabled selected> ------Select Squad Formation Strategy------ </option>
@@ -36,11 +42,17 @@
                 <option value="3" <?php echo (isset($squad) && $squad == 3) ? "selected" : "" ?>>4 Batsmen, 1 Wicketkeeper, 1 All rounders, 2 Bowlers</option>
             </select>
         </div>
-        <div>
-            <p class="heading text-center">Team List</p>
+        <p class="heading text-center">Team List</p>
+        <div id="team">
             <?php $this->load->view("content/teamlist"); ?>
+            <div class="text-center">
+                <input type="button" class="button radius small" id="save" value="SAVE"/>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                <input type="button" class="button radius small" id="reset" value="RESET"/>
+            </div>
         </div>
-    </div><div class="small-1 large-1 columns">&nbsp;</div>
+    </div>
+
+    <div class="small-1 large-1 columns">&nbsp;</div>
 
     <div id="player" class="small-5 large-5 columns frame">
         <p class="heading text-center">Player List</p>
@@ -56,7 +68,7 @@
                 <option value="4" <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == 4) ? "selected" : "" ?>>Bowler</option>
             </select>
         </div>
-        <div class="small-1 large-1 columns"></div>
+        <div class="small-1 large-1 columns">&nbsp;</div>
         <?php $this->load->view("content/playerlist"); ?>
     </div>
 </div>

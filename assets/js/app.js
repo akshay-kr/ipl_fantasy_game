@@ -1,10 +1,80 @@
 $(document).ready(function () {
     BASE_URL = $("#baseurl").val();
+
+    $("#register").on("click", function () {
+        var username = $("#username").val();
+        var password = $("#password").val();
+        if (username == "") {
+            alert("Please enter username.");
+        }
+        else if (password == "") {
+            alert("Please enter password");
+        } else {
+            $.ajax({
+                url: BASE_URL + "user/register",
+                type: 'POST',
+                data: {username: username, password: password},
+                dataType: 'text',
+                success: function (response) {
+                    if (response) {
+                        alert(response);
+                    } else {
+                        $("#username").val("");
+                        $("#password").val("");
+                        alert("You are registered. Please login.");
+                    }
+                }
+            });
+        }
+    });
+
+    $("#login").on("click", function () {
+        var username = $("#username").val();
+        var password = $("#password").val();
+        if (username == "") {
+            alert("Please enter username.");
+        }
+        else if (password == "") {
+            alert("Please enter password");
+        } else {
+            $.ajax({
+                url: BASE_URL + "user/login",
+                type: 'POST',
+                data: {username: username, password: password},
+                dataType: 'text',
+                success: function (response) {
+                    if (response == 1) {
+                        window.location.href = BASE_URL + "manage/index";
+                    } else {
+                        alert(response);
+                    }
+                }
+            });
+        }
+    });
+
+    $("#logout").on("click", function () {
+        $.ajax({
+            url: BASE_URL + "user/logout",
+            type: 'POST',
+            data: {},
+            dataType: 'text',
+            success: function (response) {
+                if (response == 1) {
+                    window.location.href = BASE_URL + "user/index";
+                } else {
+                    alert("Something went wrong!!!!");
+                }
+            }
+        });
+
+    });
+
     $(".pick").on("click", function () {
         var player_id = $(this).attr("player_id");
         var squad = $("#squad").val();
         var team_name = $("#team_name").val();
-        if (team_name=="") {
+        if (team_name == "") {
             alert("Please select a team name.");
         }
         else if (!squad) {

@@ -11,56 +11,93 @@ class Manage extends CI_Controller {
         unset($_SESSION['filter']); //Unset the filter.
     }
 
+    /**
+     * Index function passing data to the view.
+     * $_SESSION['filter'] --> Stores the currrent filter value.
+     * $_SESSION['selected'] --> Stores the selected players id.
+     * $_SESSION['budget'] -->Stores the current budget.
+     * $_SESSION['squad'] --> Stores the selected squad strategy.
+     */
     public function index() {
 
-        $filter = $this->input->get('filter');
-        if ($filter) {
-            $_SESSION['filter'] = $filter;
+        if (isset($_SESSION['username'])) {
+            //Get the filter query string value from the url.
+            $filter = $this->input->get('filter');
+            if ($filter) {
+
+                //Set filter value in session.
+                $_SESSION['filter'] = $filter;
+            }
+
+            //Get corresponding filter from the filter value.
+            $filter = $this->defineFilter($filter);
+
+            //Get pagination style configuration from the helper function.
+            $config = getPaginationStyleConfig();
+            $config["base_url"] = site_url("manage/index");
+
+            //Get the number of players from database.
+            $config["total_rows"] = $this->player_model->count($filter);
+            $config["per_page"] = PAGINATION_PER_PAGE;
+            $config["uri_segment"] = 3;
+
+            //Process query string from url.
+            if (count($_GET) > 0) {
+                $config['suffix'] = '?' . http_build_query($_GET, '', "&");
+                $config['first_url'] = $config['base_url'] . '?' . http_build_query($_GET);
+            }
+
+            $choice = $config["total_rows"] / $config["per_page"];
+            $config["num_links"] = round($choice);
+            $this->pagination->initialize($config);
+
+            //Retrieve 1st segment information from URI string.
+            $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+
+            //Array of data to passed to the view.
+            $data = array(
+                "page" => "main",
+                "title" => "IPL Fantasy League",
+                "content" => "main",
+            );
+
+            //Pass the selected player data to the view.
+            if (isset($_SESSION['selected']) && count($_SESSION['selected']) > 0) {
+                $data['selected'] = $this->player_model->get($_SESSION['selected']);
+            }
+
+            //Set and assign budget in session.
+            if (!isset($_SESSION['budget'])) {
+                $_SESSION['budget'] = 100;
+            }
+
+            //Pass the squad value to the view.
+            if (isset($_SESSION['squad'])) {
+                $data['squad'] = $_SESSION['squad'];
+            }
+
+            //Pass current budget to the view.
+            $data["budget"] = $_SESSION['budget'];
+
+            $data["links"] = $this->pagination->create_links();
+
+            //Get player data from the database.
+            $players = $this->player_model->get(FALSE, PAGINATION_PER_PAGE, $page, $filter);
+            $data["players"] = $players;
+            $data["filter"] = $filter;
+
+            //Load the view.
+            $this->load->view('index', $data);
+        } else {
+            redirect('/user/index', 'refresh');
         }
-        $filter = $this->defineFilter($filter);
-        $config = getPaginationStyleConfig();
-        $config["base_url"] = site_url("manage/index");
-        $config["total_rows"] = $this->player_model->count($filter);
-        $config["per_page"] = PAGINATION_PER_PAGE;
-        $config["uri_segment"] = 3;
-
-        if (count($_GET) > 0) {
-            $config['suffix'] = '?' . http_build_query($_GET, '', "&");
-            $config['first_url'] = $config['base_url'] . '?' . http_build_query($_GET);
-        }
-
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config["num_links"] = round($choice);
-        $this->pagination->initialize($config);
-
-        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-
-        $data = array(
-            "page" => "main",
-            "title" => "IPL Fantasy League",
-            "content" => "main",
-        );
-        if (isset($_SESSION['selected']) && count($_SESSION['selected']) > 0) {
-            $data['selected'] = $this->player_model->get($_SESSION['selected']);
-        }
-
-        if (!isset($_SESSION['budget'])) {
-            $_SESSION['budget'] = 100;
-        }
-
-        if (isset($_SESSION['squad'])) {
-            $data['squad'] = $_SESSION['squad'];
-        }
-
-        $data["budget"] = $_SESSION['budget'];
-
-        $data["links"] = $this->pagination->create_links();
-        $players = $this->player_model->get(FALSE, PAGINATION_PER_PAGE, $page, $filter);
-        $data["players"] = $players;
-        $data["filter"] = $filter;
-        $this->load->view('index', $data);
     }
 
+    /**
+     * Get the corresponding filter from filter value.
+     * @param int $filter
+     * @return boolean
+     */
     private function defineFilter($filter) {
         if ($filter == 1) {
             $filter = "bat";

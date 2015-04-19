@@ -8,4 +8,4 @@ $autoload['libraries'] = array('database','pagination');
 $autoload['helper'] = array('url','main_helper');
 $autoload['config'] = array();
 $autoload['language'] = array();
-$autoload['model'] = array('player_model');
+$autoload['model'] = array('player_model','user_model');

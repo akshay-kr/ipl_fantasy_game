@@ -2,6 +2,10 @@
 
 class Player_model extends CI_Model {
 
+    public function add($data) {
+        $this->db->insert('message_tx', $data);
+    }
+
     public function count($filter = FALSE) {
         if ($filter) {
 
@@ -17,7 +21,7 @@ class Player_model extends CI_Model {
             $this->db->where_in('id', $id);
         } else { // list conditions
             if ($filter) {
-                $this->db->where('skill',$filter);
+                $this->db->where('skill', $filter);
             }
             if ($limit) {
                 $this->db->limit($limit, $start);
