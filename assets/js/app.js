@@ -43,12 +43,12 @@ $(document).ready(function () {
     });
 
     $("#squad").on('change', function () {
-         var squad = $("#squad").val();
+        var squad = $("#squad").val();
         $.ajax({
             url: BASE_URL + "manage/changeSquad",
             type: 'POST',
-            data: {squad:squad},
-            dataType: 'json',
+            data: {squad: squad},
+            dataType: 'text',
             success: function (response) {
                 if (response) {
                     location.reload();
@@ -57,4 +57,52 @@ $(document).ready(function () {
         });
     });
 
+    $(document.body).on('click', '#saveName', function () {
+        var name = $("#team_name").val();
+        if (name != "") {
+            $.ajax({
+                url: BASE_URL + "manage/setName",
+                type: 'POST',
+                data: {name: name},
+                dataType: 'text',
+                success: function (response) {
+                    if (response) {
+                        $("#team_name").attr('disabled', 'disabled');
+                        $("#saveName").attr('value', 'EDIT');
+                        $("#saveName").attr('id', 'editName');
+                    }
+                }
+            });
+        } else {
+            alert("Please enter a team name.");
+        }
+    });
+
+    $(document.body).on('click', '#editName', function () {
+        $("#team_name").removAttr('disabled');
+        var name = $("#team_name").val();
+        $("#saveName").attr('value', 'SAVE');
+        if (name != "") {
+            $.ajax({
+                url: BASE_URL + "manage/setName",
+                type: 'POST',
+                data: {name: name},
+                dataType: 'text',
+                success: function (response) {
+                    if (response) {
+                        $("#team_name").attr('disabled', 'disabled');
+                        $("#saveName").attr('value', 'EDIT');
+                        $("#saveName").attr('id', 'editName');
+                    }
+                }
+            });
+        } else {
+            alert("Please enter a team name.");
+        }
+    });
+
+    $("#filter").on('change', function () {
+        var filter = $("#filter").val();
+        window.location.href = BASE_URL + "manage/index/?filter=" + filter;
+    });
 });

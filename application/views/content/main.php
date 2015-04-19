@@ -2,10 +2,19 @@
     <br>
     <div id="select_name" class="small-8 large-8 columns">  
         <div class="small-5 large-5 columns">
-            <input type="text" id="team_name" placeholder="Enter Team Name"/>  
+            <?php if (isset($_SESSION['name'])) { ?>
+                <input type="text" id="team_name" disabled value="<?php echo $_SESSION['name']; ?>"/>
+            <?php } else { ?>
+                <input type="text" id="team_name" placeholder="Enter Team Name"/>  
+            <?php } ?>
         </div>
+
         <div class="small-2 large-2 columns">
-            <input type="button" class="button radius tiny" id="check_avaibility" value="CHECK AVAIBILITY"/>
+            <?php if (isset($_SESSION['name'])) { ?>
+                <input type="button" class="button radius tiny" id="editName" value="EDIT"/>
+            <?php } else { ?>
+                <input type="button" class="button radius tiny" id="saveName" value="SAVE"/>
+            <?php } ?>
         </div>
         <div class="small-5 large-5 columns">
             &nbsp;
@@ -36,18 +45,18 @@
 
     <div id="player_list" class="small-5 large-5 columns">
         <div class="small-3 large-3 columns">
-            &nbsp;
+            <label for="filter">Filter</label>
         </div>
-        <div class="small-6 large-6 columns">
+        <div class="small-7 large-7 columns">
             <select class="text-center" id="filter">
-                <option selected value="-1">All</option>
-                <option value="1">Batsman</option>
-                <option value="2">Wicket Keeper</option>
-                <option value="3">All Rounder</option>
-                <option value="4">Bowler</option>
+                <option value="-1" selected <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == -1) ? "selected" : "" ?>>All</option>
+                <option value="1" <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == 1) ? "selected" : "" ?>>Batsman</option>
+                <option value="2" <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == 2) ? "selected" : "" ?>>Wicket Keeper</option>
+                <option value="3" <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == 3) ? "selected" : "" ?>>All Rounder</option>
+                <option value="4" <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == 4) ? "selected" : "" ?>>Bowler</option>
             </select>
         </div>
-        <div class="small-3 large-3 columns">&nbsp;</div>
+        <div class="small-2 large-2 columns">&nbsp;</div>
         <?php $this->load->view("content/playerlist"); ?>
     </div>
 </div>

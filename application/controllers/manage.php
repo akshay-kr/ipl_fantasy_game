@@ -8,14 +8,19 @@ class Manage extends CI_Controller {
     function Manage() {
         parent::__construct();
         session_start();
+        unset($_SESSION['filter']);
     }
 
     public function index() {
 
-        $filters = FALSE; //$this->defineFilters();
+        $filter = $this->input->get('filter');
+        if ($filter) {
+            $_SESSION['filter'] = $filter;
+        }
+        $filter = $this->defineFilter($filter);
         $config = getPaginationStyleConfig();
         $config["base_url"] = site_url("manage/index");
-        $config["total_rows"] = $this->player_model->count($filters);
+        $config["total_rows"] = $this->player_model->count($filter);
         $config["per_page"] = PAGINATION_PER_PAGE;
         $config["uri_segment"] = 3;
 
@@ -50,10 +55,25 @@ class Manage extends CI_Controller {
         $data["budget"] = $_SESSION['budget'];
 
         $data["links"] = $this->pagination->create_links();
-        $players = $this->player_model->get(FALSE, PAGINATION_PER_PAGE, $page, $filters, FALSE);
+        $players = $this->player_model->get(FALSE, PAGINATION_PER_PAGE, $page, $filter);
         $data["players"] = $players;
-        $data["filters"] = $filters;
+        $data["filter"] = $filter;
         $this->load->view('index', $data);
+    }
+
+    private function defineFilter($filter) {
+        if ($filter == 1) {
+            $filter = "bat";
+        } else if ($filter == 2) {
+            $filter = "wk";
+        } else if ($filter == 3) {
+            $filter = "all";
+        } else if ($filter == 4) {
+            $filter = "bow";
+        } else {
+            $filter = FALSE;
+        }
+        return $filter;
     }
 
     public function select() {
@@ -74,7 +94,7 @@ class Manage extends CI_Controller {
                     $strategy_flag = $this->checkStrategy($skill_count, $strategy);
                     if ($strategy_flag) {
                         $error = $strategy_flag;
-                        unset($_SESSION['selected'][count($_SESSION['selected']) - 1]);
+                        $_SESSION['selected'] = array_diff($_SESSION['selected'], array($player_id));
                         $result = $this->budget($player_id, 'remove');
                     }
                 } else {
@@ -88,7 +108,6 @@ class Manage extends CI_Controller {
             array_push($_SESSION['selected'], $player_id);
             $result = $this->budget($player_id, 'select');
         }
-        // var_dump($_SESSION['selected']);
 
         $html = $this->teamTable();
         echo json_encode(array("html" => $html, "budget" => $_SESSION['budget'], "error" => $error));
@@ -171,6 +190,13 @@ class Manage extends CI_Controller {
         unset($_SESSION['selected']);
         unset($_SESSION['budget']);
         echo "1";
+    }
+
+    public function setName() {
+
+        $name = $this->input->post('name');
+        $_SESSION['name'] = $name;
+        echo $_SESSION['name'];
     }
 
 }

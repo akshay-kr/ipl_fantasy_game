@@ -1,5 +1,5 @@
-<div class="row" id="sent-list">
-    <div class="small-12 large-12 columns center" id="list-container">  
+<div class="row">
+    <div class="small-12 large-12 columns center">  
         <table class="small-12 large-12">
             <thead>
                 <tr>
