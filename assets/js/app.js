@@ -21,7 +21,7 @@ $(document).ready(function () {
                     } else {
                         $("#username").val("");
                         $("#password").val("");
-                        alert("You are registered. Please login.");
+                        alert("Successfully registered. Please login.");
                     }
                 }
             });
@@ -70,14 +70,32 @@ $(document).ready(function () {
 
     });
 
+    $("#save").on("click", function () {
+        var team_name = $("#team_name").val();
+        if (team_name == "") {
+            alert("Please enter a team name.")
+        } else {
+            $.ajax({
+                url: BASE_URL + "manage/save",
+                type: 'POST',
+                data: {team_name: team_name},
+                dataType: 'text',
+                success: function (response) {
+                    if (response) {
+                        alert(response);
+                    } else {
+                        alert('Saved Successfully');
+                    }
+                }
+            });
+        }
+
+    });
+
     $(".pick").on("click", function () {
         var player_id = $(this).attr("player_id");
         var squad = $("#squad").val();
-        var team_name = $("#team_name").val();
-        if (team_name == "") {
-            alert("Please select a team name.");
-        }
-        else if (!squad) {
+        if (!squad) {
             alert("Please select the strategy.");
         } else {
             $.ajax({
@@ -131,19 +149,22 @@ $(document).ready(function () {
         });
     });
 
-    $(document.body).on('click', '#saveName', function () {
+    $(document.body).on('click', '#checkName', function () {
         var name = $("#team_name").val();
         if (name != "") {
             $.ajax({
-                url: BASE_URL + "manage/setName",
+                url: BASE_URL + "manage/checkName",
                 type: 'POST',
                 data: {name: name},
                 dataType: 'text',
                 success: function (response) {
                     if (response) {
+                        alert(response);
+                    }else{
+                        alert("Team name is available.");
                         $("#team_name").attr('disabled', 'disabled');
-                        $("#saveName").attr('value', 'EDIT');
-                        $("#saveName").attr('id', 'editName');
+                        $("#checkName").attr('value', 'EDIT');
+                        $("#checkName").attr('id', 'editName');
                     }
                 }
             });
@@ -154,8 +175,8 @@ $(document).ready(function () {
 
     $(document.body).on('click', '#editName', function () {
         $("#team_name").removeAttr('disabled');
-        $("#editName").attr('value', 'SAVE');
-        $("#editName").attr('id', 'saveName');
+        $("#editName").attr('value', 'CHECK AVAILABILITY');
+        $("#editName").attr('id', 'checkName');
 
     });
 

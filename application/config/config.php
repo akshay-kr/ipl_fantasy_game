@@ -25,8 +25,8 @@ $config['log_date_format'] = 'Y-m-d H:i:s';
 $config['cache_path'] = '';
 $config['encryption_key'] = 'awdadaw561d641aw56d486a4w89d46aw4d64q324345423';
 
-$config['sess_cookie_name'] = 'PB-Resizer';
-$config['sess_expiration'] = 7200;
+$config['sess_cookie_name'] = 'iplfantasy';
+$config['sess_expiration'] = 14400;
 $config['sess_expire_on_close'] = FALSE;
 $config['sess_encrypt_cookie'] = FALSE;
 $config['sess_use_database'] = FALSE;

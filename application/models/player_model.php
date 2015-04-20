@@ -2,10 +2,6 @@
 
 class Player_model extends CI_Model {
 
-    public function add($data) {
-        $this->db->insert('message_tx', $data);
-    }
-
     public function count($filter = FALSE) {
         if ($filter) {
 

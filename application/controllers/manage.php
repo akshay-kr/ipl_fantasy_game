@@ -201,13 +201,13 @@ class Manage extends CI_Controller {
 
         $error = NULL;
         if (isset($skill_count['bat']) && $skill_count['bat'] > $strategy['bat']) {
-            $error = "Only " . $strategy['bat'] . " batsman allowed";
+            $error = "Only " . $strategy['bat'] . " batsman allowed.";
         } else if (isset($skill_count['wk']) && $skill_count['wk'] > $strategy['wk']) {
-            $error = "Only " . $strategy['wk'] . " wicket keeper allowed";
+            $error = "Only " . $strategy['wk'] . " wicket keeper allowed.";
         } else if (isset($skill_count['all']) && $skill_count['all'] > $strategy['all']) {
-            $error = "Only " . $strategy['all'] . " all rounder allowed";
+            $error = "Only " . $strategy['all'] . " all rounder allowed.";
         } else if (isset($skill_count['bow']) && $skill_count['bow'] > $strategy['bow']) {
-            $error = "Only " . $strategy['bow'] . " bowler allowed";
+            $error = "Only " . $strategy['bow'] . " bowler allowed.";
         }
 
         return $error;
@@ -229,11 +229,59 @@ class Manage extends CI_Controller {
         echo "1";
     }
 
-    public function setName() {
+    public function checkName() {
 
         $name = $this->input->post('name');
-        $_SESSION['name'] = $name;
-        echo $_SESSION['name'];
+        $result = $this->user_model->get(array('team' => $name));
+        $error = NULL;
+        if (count($result) > 0) {
+            if ($result[0]->team == $name) {
+                $error = "This team name already assigned to you.";
+            } else {
+                $error = "Sorry this name is not available.";
+            }
+        } else {
+            $_SESSION['name'] = $name;
+        }
+        echo $error;
+    }
+
+    public function save() {
+
+        $team_name = $this->input->post('team_name');
+        $error = NULL;
+        if (count($_SESSION['selected']) < 8) {
+            $error = "Please complete your team before submitting.";
+        } else {
+            $result = $this->user_model->get(array('team' => $team_name));
+            if (count($result) > 0 && $result[0]->username != $_SESSION['username']) {
+                $error = "Team name already exist.";
+            } else {
+                $players = "";
+                foreach ($_SESSION['selected'] as $selected) {
+                    $players .= $selected . " ";
+                }
+
+                $squad = $_SESSION['squad'];
+                $budget = $_SESSION['budget'];
+
+                $data = array(
+                    'team' => $team_name,
+                    'players' => $players,
+                    'squad' => $squad,
+                    'budget' => $budget
+                );
+
+                $condition = array(
+                    'username' => $_SESSION['username']
+                );
+                $is_added = $this->user_model->update($data, $condition);
+                if (!$is_added) {
+                    $error = "Something went wrong";
+                }
+            }
+        }
+        echo $error;
     }
 
 }

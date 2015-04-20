@@ -5,9 +5,8 @@
     </div>
 </div>
 <div class="row" id="main_container">
-    <div class="small-1 large-1 columns">&nbsp;</div>
-    <div id="select_name" class="small-4 large-4 columns">  
-        <div class="small-8 large-8 columns">
+    <div id="select_name" class="small-6 large-6 columns">  
+        <div class="small-6 large-6 columns">
             <?php if (isset($_SESSION['name'])) { ?>
                 <input type="text" id="team_name" disabled value="<?php echo $_SESSION['name']; ?>"/>
             <?php } else { ?>
@@ -15,16 +14,16 @@
             <?php } ?>
         </div>
 
-        <div class="small-4 large-4 columns">
+        <div class="small-6 large-6 columns">
             <?php if (isset($_SESSION['name'])) { ?>
                 <input type="button" class="button radius tiny" id="editName" value="EDIT"/>
             <?php } else { ?>
-                <input type="button" class="button radius tiny" id="saveName" value="SAVE"/>
+                <input type="button" class="button radius tiny" id="checkName" value="CHECK AVAILABILITY"/>
             <?php } ?>
         </div>
 
     </div>
-    <div class="small-4 large-4 columns">&nbsp;</div>
+    <div class="small-3 large-3 columns">&nbsp;</div>
     <div id="budget_container" class="small-2 large-2 columns">
         <p class="text-center">BUDGET</p>
         <p id="budget" class="text-center"><?php echo "$" . $budget . "m" ?></p>
@@ -45,11 +44,12 @@
         <p class="heading text-center">Team List</p>
         <div id="team">
             <?php $this->load->view("content/teamlist"); ?>
-            <div class="text-center">
-                <input type="button" class="button radius small" id="save" value="SAVE"/>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                <input type="button" class="button radius small" id="reset" value="RESET"/>
-            </div>
         </div>
+        <div class="text-center">
+            <input type="button" class="button radius small" id="save" value="SAVE"/>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+            <input type="button" class="button radius small" id="reset" value="RESET"/>
+        </div>
+
     </div>
 
     <div class="small-1 large-1 columns">&nbsp;</div>

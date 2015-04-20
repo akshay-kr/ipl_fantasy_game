@@ -53,6 +53,7 @@ class User extends CI_Controller {
             $user_data = $this->user_model->validate($username, $password);
             if (count($user_data) > 0) {
                 $_SESSION['username'] = $username;
+                $this->setTeamData($username);
                 $message = TRUE;
             } else {
                 $message = "Incorrect password";
@@ -64,8 +65,29 @@ class User extends CI_Controller {
         echo $message;
     }
 
+    private function setTeamData($username) {
+
+        $team_data = $this->user_model->get(array('username' => $username));
+        if ($team_data[0]->team != "") {
+            $_SESSION['name'] = $team_data[0]->team;
+        }
+        $_SESSION['squad'] = $team_data[0]->squad;
+        $_SESSION['budget'] = $team_data[0]->budget;
+        $splitted = explode(" ", $team_data[0]->players);
+        $_SESSION['selected']=array();
+        foreach($splitted as $split){
+            if($split!=""){
+                array_push($_SESSION['selected'], $split);
+            }
+        }
+    }
+
     public function logout() {
         unset($_SESSION['username']);
+        unset($_SESSION['name']);
+        unset($_SESSION['squad']);
+        unset($_SESSION['budget']);
+        unset($_SESSION['selected']);
         echo TRUE;
     }
 

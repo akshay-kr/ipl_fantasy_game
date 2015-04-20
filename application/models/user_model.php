@@ -2,7 +2,8 @@
 
 class User_model extends CI_Model {
 
-    public function add($data, $condition = FALSE) {
+    public function add($data) {
+
         $this->db->insert('user', $data);
         return TRUE;
     }
@@ -17,6 +18,18 @@ class User_model extends CI_Model {
         }
         $query = $this->db->get('user');
         return $query->result();
+    }
+
+    public function get($data) {
+
+        $this->db->where($data);
+        $query = $this->db->get('user');
+        return $query->result();
+    }
+
+    public function update($data, $condition) {
+
+        return $this->db->update('user', $data, $condition);
     }
 
 }
