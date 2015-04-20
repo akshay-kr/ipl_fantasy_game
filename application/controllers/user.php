@@ -34,7 +34,7 @@ class User extends CI_Controller {
         } else {
             $data = array(
                 'username' => $username,
-                'password' => $password,
+                'password' => $this->encrypt->encode($password),
             );
             $this->user_model->add($data);
         }
@@ -46,20 +46,21 @@ class User extends CI_Controller {
 
         $username = $this->input->post('username');
         $password = $this->input->post('password');
+
         $message = NULL;
 
         $result = $this->user_model->validate($username);
         if (count($result) > 0) {
-            $user_data = $this->user_model->validate($username, $password);
-            if (count($user_data) > 0) {
+            $user_data = $this->user_model->get(array("username" => $username));
+            if ($password == $this->encrypt->decode($user_data[0]->password)) {
                 $_SESSION['username'] = $username;
                 $this->setTeamData($username);
                 $message = TRUE;
             } else {
-                $message = "Incorrect password";
+                $message = "Incorrect password.";
             }
         } else {
-            $message = "Invalid username";
+            $message = "Invalid username.";
         }
 
         echo $message;
@@ -74,9 +75,9 @@ class User extends CI_Controller {
         $_SESSION['squad'] = $team_data[0]->squad;
         $_SESSION['budget'] = $team_data[0]->budget;
         $splitted = explode(" ", $team_data[0]->players);
-        $_SESSION['selected']=array();
-        foreach($splitted as $split){
-            if($split!=""){
+        $_SESSION['selected'] = array();
+        foreach ($splitted as $split) {
+            if ($split != "") {
                 array_push($_SESSION['selected'], $split);
             }
         }

@@ -8,8 +8,8 @@
                     <th>Price</th>
                 </tr>
             </thead>
-            <?php if (isset($players) && count($players)) { ?>
-                <?php foreach ($players as $player) { ?>
+            <?php if (isset($all_players) && count($all_players)) { ?>
+                <?php foreach ($all_players as $player) { ?>
                     <tr>
                         <td>
                             <a class="<?php echo (isset($_SESSION['selected']) && in_array($player->id, $_SESSION['selected'])) ? "pick disabled" : "pick"; ?>" player_id="<?php echo $player->id; ?>"><?php echo $player->name; ?></a>
@@ -28,7 +28,7 @@
 
         </table>
         <div id="links">
-            <p><?php echo $links; ?></p>
+            <p><?php echo $paging; ?></p>
         </div>
     </div>
 </div>

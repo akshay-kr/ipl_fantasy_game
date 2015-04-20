@@ -7,6 +7,7 @@ class Manage extends CI_Controller {
 
     function Manage() {
         parent::__construct();
+
         session_start(); //Strat the session.
         unset($_SESSION['filter']); //Unset the filter.
     }
@@ -31,28 +32,35 @@ class Manage extends CI_Controller {
 
             //Get corresponding filter from the filter value.
             $filter = $this->defineFilter($filter);
+//            //Get pagination style configuration from the helper function.
+//            $config = getPaginationStyleConfig();
+//            $config["base_url"] = site_url("manage/index");
+//
+//            //Get the number of players from database.
+//            $config["total_rows"] = $this->player_model->count($filter);
+//            $config["per_page"] = PAGINATION_PER_PAGE;
+//            $config["uri_segment"] = 3;
+//
+//            //Process query string from url.
+//            if (count($_GET) > 0) {
+//                $config['suffix'] = '?' . http_build_query($_GET, '', "&");
+//                $config['first_url'] = $config['base_url'] . '?' . http_build_query($_GET);
+//            }
+//
+//            $choice = $config["total_rows"] / $config["per_page"];
+//            $config["num_links"] = round($choice);
+//            $this->pagination->initialize($config);
+//
+//            //Retrieve 1st segment information from URI string.
+//            $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
 
-            //Get pagination style configuration from the helper function.
-            $config = getPaginationStyleConfig();
-            $config["base_url"] = site_url("manage/index");
+            $pdata['TotalRec'] = $this->player_model->count($filter);
+            $pdata['perPage'] = PAGINATION_PER_PAGE;
+            $pdata['ajax_function'] = 'pagination_ajax';
 
-            //Get the number of players from database.
-            $config["total_rows"] = $this->player_model->count($filter);
-            $config["per_page"] = PAGINATION_PER_PAGE;
-            $config["uri_segment"] = 3;
-
-            //Process query string from url.
-            if (count($_GET) > 0) {
-                $config['suffix'] = '?' . http_build_query($_GET, '', "&");
-                $config['first_url'] = $config['base_url'] . '?' . http_build_query($_GET);
-            }
-
-            $choice = $config["total_rows"] / $config["per_page"];
-            $config["num_links"] = round($choice);
-            $this->pagination->initialize($config);
-
-            //Retrieve 1st segment information from URI string.
-            $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+            $subdata['paging'] = $this->parser->parse('../views/content/paging', $pdata, TRUE);
+            $page = $this->getOffset();
+            $subdata['all_players'] = $this->player_model->get(FALSE, PAGINATION_PER_PAGE, $page, $filter);
 
             //Array of data to passed to the view.
             $data = array(
@@ -60,6 +68,8 @@ class Manage extends CI_Controller {
                 "title" => "IPL Fantasy League",
                 "content" => "main",
             );
+
+            $data['body_content'] = $this->parser->parse('../views/content/playerlist', $subdata, TRUE);
 
             //Pass the selected player data to the view.
             if (isset($_SESSION['selected']) && count($_SESSION['selected']) > 0) {
@@ -79,11 +89,10 @@ class Manage extends CI_Controller {
             //Pass current budget to the view.
             $data["budget"] = $_SESSION['budget'];
 
-            $data["links"] = $this->pagination->create_links();
-
+//            $data["links"] = $this->pagination->create_links();
             //Get player data from the database.
-            $players = $this->player_model->get(FALSE, PAGINATION_PER_PAGE, $page, $filter);
-            $data["players"] = $players;
+//            $players = $this->player_model->get(FALSE, PAGINATION_PER_PAGE, $page, $filter);
+            //$data["players"] = $players;
             $data["filter"] = $filter;
 
             //Load the view.
@@ -91,6 +100,36 @@ class Manage extends CI_Controller {
         } else {
             redirect('/user/index', 'refresh');
         }
+    }
+
+    private function getOffset() {
+        $page = $this->input->post('page');
+        if (!$page):
+            $offset = 0;
+        else:
+            $offset = $page;
+        endif;
+        return $offset;
+    }
+
+    public function pagination_ajax() {
+
+        $filter = $this->input->post('filter');
+        if (!$filter) {
+            $filter = FALSE;
+        } else {
+            $filter = $this->defineFilter($filter);
+        }
+        $pdata['TotalRec'] = $this->player_model->count($filter);
+        $pdata['perPage'] = PAGINATION_PER_PAGE;
+
+        $pdata['ajax_function'] = 'pagination_ajax';
+
+        $data['paging'] = $this->parser->parse('../views/content/paging', $pdata, TRUE);
+        $page = $this->getOffset();
+        $data['all_players'] = $this->player_model->get(FALSE, PAGINATION_PER_PAGE, $page, $filter);
+
+        $this->load->view('content/playerlist', $data);
     }
 
     /**
@@ -236,7 +275,7 @@ class Manage extends CI_Controller {
         $error = NULL;
         if (count($result) > 0) {
             if ($result[0]->team == $name) {
-                $error = "This team name already assigned to you.";
+                $error = "This team name is already assigned to you.";
             } else {
                 $error = "Sorry this name is not available.";
             }

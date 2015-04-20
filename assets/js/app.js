@@ -1,5 +1,11 @@
-$(document).ready(function () {
+jQuery(document).ready(function () {
+    var $ = jQuery.noConflict();
     BASE_URL = $("#baseurl").val();
+    var is_unsaved = false;
+    var is_squadChange = false;
+    if (getParameterByName('s') == "1") {
+        is_squadChange = true;
+    }
 
     $("#register").on("click", function () {
         var username = $("#username").val();
@@ -35,7 +41,11 @@ $(document).ready(function () {
             alert("Please enter username.");
         }
         else if (password == "") {
-            alert("Please enter password");
+            alert("Please enter password.");
+        } else if (username.length < 8) {
+            alert("Username should be of atleast 8 characters.");
+        } else if (password.length < 6) {
+            alert("Password should be of atleast 6 characters.");
         } else {
             $.ajax({
                 url: BASE_URL + "user/login",
@@ -47,6 +57,7 @@ $(document).ready(function () {
                         window.location.href = BASE_URL + "manage/index";
                     } else {
                         alert(response);
+                        $("#password").val("");
                     }
                 }
             });
@@ -85,14 +96,14 @@ $(document).ready(function () {
                         alert(response);
                     } else {
                         alert('Saved Successfully');
+                        is_unsaved = FALSE;
                     }
                 }
             });
         }
 
     });
-
-    $(".pick").on("click", function () {
+    $(document.body).on('click', '.pick', function () {
         var player_id = $(this).attr("player_id");
         var squad = $("#squad").val();
         if (!squad) {
@@ -110,6 +121,7 @@ $(document).ready(function () {
                         $("#budget").text("$" + response.budget + "m");
                         $(".pick[player_id=" + player_id + "]").addClass('disabled');
                         $("#team").html("").html(response.html);
+                        is_unsaved = true;
                     }
                 }
             });
@@ -129,6 +141,7 @@ $(document).ready(function () {
                     $("#budget").text("$" + response.budget + "m");
                     $(".pick[player_id=" + player_id + "]").removeClass('disabled');
                     $("#team").html("").html(response.html);
+                    is_unsaved = true;
                 }
             }
         });
@@ -136,6 +149,7 @@ $(document).ready(function () {
 
     $("#squad").on('change', function () {
         var squad = $("#squad").val();
+        $(window).unbind('beforeunload');
         $.ajax({
             url: BASE_URL + "manage/changeSquad",
             type: 'POST',
@@ -143,7 +157,7 @@ $(document).ready(function () {
             dataType: 'text',
             success: function (response) {
                 if (response) {
-                    location.reload();
+                    location.href = BASE_URL + "manage/index?s=1";
                 }
             }
         });
@@ -160,11 +174,12 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response) {
                         alert(response);
-                    }else{
+                    } else {
                         alert("Team name is available.");
                         $("#team_name").attr('disabled', 'disabled');
                         $("#checkName").attr('value', 'EDIT');
                         $("#checkName").attr('id', 'editName');
+                        is_unsaved = true;
                     }
                 }
             });
@@ -180,8 +195,46 @@ $(document).ready(function () {
 
     });
 
+//    $("#filter").on('change', function () {
+//        var filter = $("#filter").val();
+//        $(window).unbind('beforeunload');
+//        window.location.href = BASE_URL + "manage/index/?filter=" + filter;
+//    });
+
     $("#filter").on('change', function () {
-        var filter = $("#filter").val();
-        window.location.href = BASE_URL + "manage/index/?filter=" + filter;
+        var filter=$("#filter").val();
+        $.ajax({
+            url: BASE_URL + "manage/pagination_ajax",
+            type: 'POST',
+            data: {filter: filter},
+            dataType: 'text',
+            success: function (response) {
+                if (response) {
+                } else {
+                   
+                }
+            }
+        });
     });
+
+
+    $(window).on("beforeunload", function () {
+
+        if (is_unsaved && is_squadChange) {
+            return "You have unsaved changes. Do you really want to close?";
+        }
+
+    });
+
 });
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+(function ($) {
+    $(document);
+}(jQuery));

@@ -46,8 +46,7 @@
             <?php $this->load->view("content/teamlist"); ?>
         </div>
         <div class="text-center">
-            <input type="button" class="button radius small" id="save" value="SAVE"/>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-            <input type="button" class="button radius small" id="reset" value="RESET"/>
+            <input type="button" class="button radius small" id="save" value="SAVE"/>
         </div>
 
     </div>
@@ -69,7 +68,9 @@
             </select>
         </div>
         <div class="small-1 large-1 columns">&nbsp;</div>
-        <?php $this->load->view("content/playerlist"); ?>
+        <div id="container">
+            <?php echo $body_content; ?> 
+        </div>
     </div>
 </div>
 
