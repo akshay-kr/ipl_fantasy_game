@@ -1,5 +1,5 @@
 <div class="row">
-    <h3 class="text-center"><?php echo "Hi, " . $_SESSION['username']; ?></h3>
+    <h3 class="text-center"><?php echo "Hello, " . $_SESSION['username']; ?></h3>
     <div class="text-center">
         <h5><a id ="logout">Logout</a></h5>
     </div>

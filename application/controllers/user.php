@@ -12,6 +12,7 @@ class User extends CI_Controller {
 
     public function index() {
 
+        $this->unsetAllSession();
         //Array of data to passed to the view.
         $data = array(
             "page" => "Login",
@@ -83,13 +84,12 @@ class User extends CI_Controller {
         }
     }
 
-    public function logout() {
+    public function unsetAllSession() {
         unset($_SESSION['username']);
         unset($_SESSION['name']);
         unset($_SESSION['squad']);
         unset($_SESSION['budget']);
         unset($_SESSION['selected']);
-        echo TRUE;
     }
 
 }

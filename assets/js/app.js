@@ -1,11 +1,13 @@
 jQuery(document).ready(function () {
     var $ = jQuery.noConflict();
     BASE_URL = $("#baseurl").val();
+    window.history.forward(1);
     var is_unsaved = false;
     var is_squadChange = false;
     if (getParameterByName('s') == "1") {
         is_squadChange = true;
     }
+
 
     $("#register").on("click", function () {
         var username = $("#username").val();
@@ -65,20 +67,7 @@ jQuery(document).ready(function () {
     });
 
     $("#logout").on("click", function () {
-        $.ajax({
-            url: BASE_URL + "user/logout",
-            type: 'POST',
-            data: {},
-            dataType: 'text',
-            success: function (response) {
-                if (response == 1) {
-                    window.location.href = BASE_URL + "user/index";
-                } else {
-                    alert("Something went wrong!!!!");
-                }
-            }
-        });
-
+        window.location.href = BASE_URL + "user/index";
     });
 
     $("#save").on("click", function () {
@@ -96,7 +85,7 @@ jQuery(document).ready(function () {
                         alert(response);
                     } else {
                         alert('Saved Successfully');
-                        is_unsaved = FALSE;
+                        is_unsaved = false;
                     }
                 }
             });
@@ -195,11 +184,6 @@ jQuery(document).ready(function () {
 
     });
 
-//    $("#filter").on('change', function () {
-//        var filter = $("#filter").val();
-//        $(window).unbind('beforeunload');
-//        window.location.href = BASE_URL + "manage/index/?filter=" + filter;
-//    });
 
     $("#filter").on('change', function () {
         var filter = $("#filter").val();
@@ -209,8 +193,7 @@ jQuery(document).ready(function () {
 
 
     $(window).on("beforeunload", function () {
-
-        if (is_unsaved && is_squadChange) {
+        if (is_unsaved || is_squadChange) {
             return "You have unsaved changes. Do you really want to close?";
         }
 
@@ -225,6 +208,6 @@ function getParameterByName(name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-(function ($) {
-    $(document);
-}(jQuery));
+function disableBack() {
+    window.history.forward()
+}

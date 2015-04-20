@@ -1,4 +1,4 @@
-<div class="row" id="sent-list">
+<div class="row" id="team_list">
     <div class="small-12 large-12 columns center" id="list-container">  
         <table class="small-12 large-12">
             <thead>
