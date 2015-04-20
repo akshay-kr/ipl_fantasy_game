@@ -202,19 +202,9 @@ jQuery(document).ready(function () {
 //    });
 
     $("#filter").on('change', function () {
-        var filter=$("#filter").val();
-        $.ajax({
-            url: BASE_URL + "manage/pagination_ajax",
-            type: 'POST',
-            data: {filter: filter},
-            dataType: 'text',
-            success: function (response) {
-                if (response) {
-                } else {
-                   
-                }
-            }
-        });
+        var filter = $("#filter").val();
+        new Ajax.Updater("container", BASE_URL + "manage/pagination_ajax", {method: "post", parameters: {filter: filter}, evalScripts: true});
+        return false;
     });
 
 
