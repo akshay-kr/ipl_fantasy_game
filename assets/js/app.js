@@ -87,8 +87,9 @@ jQuery(document).ready(function () {
                     if (response) {
                         alert(response);
                     } else {
-                        alert('Saved Successfully');
                         is_unsaved = false;
+                        $(window).unbind('beforeunload');
+                        alert('Saved Successfully');
                     }
                 }
             });

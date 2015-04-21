@@ -164,30 +164,34 @@ class Manage extends CI_Controller {
             //Check if no. of players is less than 8.
             if (count($_SESSION['selected']) < 8) {
 
-                //Get the reduced budget according to the player price.
-                $result = $this->budget($player_id, 'select');
-                if ($result) {
-
-                    //Assign the player id in selected players session array.
-                    array_push($_SESSION['selected'], $player_id);
-
-                    //Get the the strategy from helper function using the value of squad.
-                    $strategy = getStrategy($squad);
-
-                    //Get the count of skills of selected players.
-                    $skill_count = $this->skillCount();
-
-                    //Check strategy match. Returns error if strategy does not match with skill counts.
-                    $strategy_flag = $this->checkStrategy($skill_count, $strategy);
-
-                    //If strategy does not match ie, error then remove the last selected player.
-                    if ($strategy_flag) {
-                        $error = $strategy_flag;
-                        $_SESSION['selected'] = array_diff($_SESSION['selected'], array($player_id));
-                        $result = $this->budget($player_id, 'remove');
-                    }
+                if (in_array($player_id, $_SESSION['selected'])) {
+                    $error = "You have already selected this player.";
                 } else {
-                    $error = "You dont have enough budget to buy this player.";
+                    //Get the reduced budget according to the player price.
+                    $result = $this->budget($player_id, 'select');
+                    if ($result) {
+
+                        //Assign the player id in selected players session array.
+                        array_push($_SESSION['selected'], $player_id);
+
+                        //Get the the strategy from helper function using the value of squad.
+                        $strategy = getStrategy($squad);
+
+                        //Get the count of skills of selected players.
+                        $skill_count = $this->skillCount();
+
+                        //Check strategy match. Returns error if strategy does not match with skill counts.
+                        $strategy_flag = $this->checkStrategy($skill_count, $strategy);
+
+                        //If strategy does not match ie, error then remove the last selected player.
+                        if ($strategy_flag) {
+                            $error = $strategy_flag;
+                            $_SESSION['selected'] = array_diff($_SESSION['selected'], array($player_id));
+                            $result = $this->budget($player_id, 'remove');
+                        }
+                    } else {
+                        $error = "You dont have enough budget to buy this player.";
+                    }
                 }
             } else if (count($_SESSION['selected']) == 8) {
                 $error = "Maximum of 8 players can be selected.";
