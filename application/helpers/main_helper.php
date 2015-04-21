@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Get the current strategy from squad value.
+ * @param int $squad
+ * @return array
+ */
 function getStrategy($squad) {
     if ($squad == 1) {
         $strategy = array(
@@ -27,6 +32,11 @@ function getStrategy($squad) {
     return $strategy;
 }
 
+/**
+ * Get skill from skill code.
+ * @param string $code
+ * @return string
+ */
 function getSkill($code) {
     switch ($code) {
         case "bat":
