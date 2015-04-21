@@ -28,7 +28,7 @@
 
         </table>
         <div id="links">
-            <p><?php echo $paging; ?></p>
+            <p id="page_link"><?php echo $paging; ?></p>
         </div>
     </div>
 </div>

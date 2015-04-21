@@ -82,3 +82,9 @@ a.disabled{
 #player{
     margin-bottom:10px;
 }
+
+#page_link{
+    padding-bottom: 5px;
+    font-size: large;
+    text-align: center;
+}

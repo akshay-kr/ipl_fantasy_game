@@ -60,11 +60,11 @@
         </div>
         <div class="small-7 large-7 columns" id="filter_container">
             <select class="text-center" id="filter">
-                <option value="-1" selected <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == -1) ? "selected" : "" ?>>All</option>
-                <option value="1" <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == 1) ? "selected" : "" ?>>Batsman</option>
-                <option value="2" <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == 2) ? "selected" : "" ?>>Wicket Keeper</option>
-                <option value="3" <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == 3) ? "selected" : "" ?>>All Rounder</option>
-                <option value="4" <?php echo (isset($_SESSION['filter']) && $_SESSION['filter'] == 4) ? "selected" : "" ?>>Bowler</option>
+                <option value="-1" selected >All</option>
+                <option value="1">Batsman</option>
+                <option value="2">Wicket Keeper</option>
+                <option value="3">All Rounder</option>
+                <option value="4">Bowler</option>
             </select>
         </div>
         <div class="small-1 large-1 columns">&nbsp;</div>

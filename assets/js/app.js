@@ -1,13 +1,16 @@
 jQuery(document).ready(function () {
     var $ = jQuery.noConflict();
     BASE_URL = $("#baseurl").val();
-    window.history.forward(1);
     var is_unsaved = false;
     var is_squadChange = false;
     if (getParameterByName('s') == "1") {
         is_squadChange = true;
     }
 
+    var n = getParameterByName('n');
+    if (n != "") {
+        $("#team_name").val(n);
+    }
 
     $("#register").on("click", function () {
         var username = $("#username").val();
@@ -138,6 +141,7 @@ jQuery(document).ready(function () {
 
     $("#squad").on('change', function () {
         var squad = $("#squad").val();
+        var name = $("#team_name").val();
         $(window).unbind('beforeunload');
         $.ajax({
             url: BASE_URL + "manage/changeSquad",
@@ -146,7 +150,7 @@ jQuery(document).ready(function () {
             dataType: 'text',
             success: function (response) {
                 if (response) {
-                    location.href = BASE_URL + "manage/index?s=1";
+                    location.href = BASE_URL + "manage/index?s=1&n=" + name;
                 }
             }
         });
